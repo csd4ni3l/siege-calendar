@@ -1,4 +1,4 @@
-from utils.utils import slow_print, getchar, is_valid_date, siege_week
+from utils.utils import getchar, is_valid_date, siege_week
 from utils.hackatime import Client
 
 from rich.console import Console
@@ -35,7 +35,7 @@ class CLI():
         selected_option = ''
         
         while selected_option not in options:
-            slow_print(text)
+            print(text)
             selected_option = self.wait_for_input("Select an option: ")
             os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -43,8 +43,8 @@ class CLI():
 
     def render_logo(self):
         from utils.constants import LOGO_ASCII_ART, PROJECT_INFO
-        slow_print(LOGO_ASCII_ART, 0.01)
-        slow_print(PROJECT_INFO)
+        print(LOGO_ASCII_ART, 0.01)
+        print(PROJECT_INFO)
 
     def home(self, start=False):
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -56,17 +56,17 @@ class CLI():
         self.command_wait(HOME_SCREEN.format(siege_week=siege_week()), {"q": sys.exit, "t": lambda: self.stats_screen(True), "a": self.stats_screen, "p": self.projects, "g": self.goals, "h": self.shop, "s": self.statistics, "c": self.calendar})
 
     def statistics(self):
-        slow_print("Comming Soon!")
+        print("Comming Soon!")
         self.wait_for_exit()
         self.home()
 
     def calendar(self):
-        slow_print("Comming Soon!")
+        print("Comming Soon!")
         self.wait_for_exit()
         self.home()
 
     def projects(self):
-        slow_print("Due to platform limitations, you have to add your projects from Hackatime manually. Sorry about this.")
+        print("Due to platform limitations, you have to add your projects from Hackatime manually. Sorry about this.")
         
         print("Loading Hackatime stats...")
         data = self.hackatime_client.get_stats()
@@ -88,7 +88,7 @@ class CLI():
 
             console.print(table)
         else:
-            slow_print("You dont have any Siege projects.")
+            print("You dont have any Siege projects.")
 
         self.command_wait("""You can do the following:
 a - Add project from Hackatime
@@ -116,7 +116,7 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
 
             console.print(table)
         else:
-            slow_print("You dont have any Siege projects.")
+            print("You dont have any Siege projects.")
             self.wait_for_exit()
             self.projects()
             return
@@ -146,13 +146,13 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
         self.data["coffers"] += coffer_amount
         self.save_data()
 
-        slow_print(f"Succesfully added ship event to {project_name} on date {ship_date} for {hour_amount} hours and {coffer_amount} coffers!")
+        print(f"Succesfully added ship event to {project_name} on date {ship_date} for {hour_amount} hours and {coffer_amount} coffers!")
 
         self.wait_for_exit()
         self.projects()
 
     def add_project(self):
-        slow_print("Here are your Hackatime projects starting from September 1th, 2025.")
+        print("Here are your Hackatime projects starting from September 1th, 2025.")
         print("Loading Hackatime stats...")
         data = self.hackatime_client.get_stats()
 
@@ -178,7 +178,7 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
         self.data["projects"][project_name] = {"ship_events": [], "total_coffers": 0}
         self.save_data()
 
-        slow_print(f"Project {project_name} succesfully added to Siege projects!")
+        print(f"Project {project_name} succesfully added to Siege projects!")
 
         self.wait_for_exit()
         self.projects()
@@ -195,9 +195,9 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
         self.data["coffers"] += int(coffers)
         self.save_data()
 
-        slow_print(f"Multiplier: {round(int(coffers) / int(hours), 2)}x")
-        slow_print(f"Date: {self.hackatime_client.get_date()}")
-        slow_print(f"You are now the proud owner of {self.data['data']['coffers']} coffers!")
+        print(f"Multiplier: {round(int(coffers) / int(hours), 2)}x")
+        print(f"Date: {self.hackatime_client.get_date()}")
+        print(f"You are now the proud owner of {self.data['data']['coffers']} coffers!")
 
         self.wait_for_exit()
         self.home()
@@ -250,30 +250,30 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
         os.system('cls' if os.name == 'nt' else 'clear')
 
         remaining_days = (date(*map(int, goal_date.split("-"))) - date.today()).days
-        slow_print(f"You have {remaining_days} remaining days of siege to complete this goal!")
+        print(f"You have {remaining_days} remaining days of siege to complete this goal!")
 
         if goal_type == "coffers":
             if self.data["coffers"] > goal_number:
-                slow_print("Goal already completed, skipping...")
+                print("Goal already completed, skipping...")
                 return
             
-            slow_print(f"You need {goal_number - self.data['data']['coffers']} more coffers to complete this goal!")
+            print(f"You need {goal_number - self.data['data']['coffers']} more coffers to complete this goal!")
 
         elif goal_type == "hours":
-            if stats[3] / 3600 > goal_number:
-                slow_print("Goal already completed, skipping...")
+            if stats[5] / 3600 > goal_number:
+                print("Goal already completed, skipping...")
                 return
             
             difference = goal_number - (stats[5] / 3600)
             daily_average_hours = (stats[7] / 3600)
 
-            slow_print(f"You need {round(difference, 1)} more hours to complete this goal!")
-            slow_print(f"Your daily average time is {stats[6]}")
+            print(f"You need {round(difference, 1)} more hours to complete this goal!")
+            print(f"Your daily average time is {stats[6]}")
 
             if difference > remaining_days * daily_average_hours:
-                slow_print(f"If you don't hurry up, you cant complete this goal!\nWith your current daily average, you would complete it in {round(difference / daily_average_hours, 1)} days!")
+                print(f"If you don't hurry up, you cant complete this goal!\nWith your current daily average, you would complete it in {round(difference / daily_average_hours, 1)} days!")
             else:
-                slow_print(f"With your daily average time, you can complete this goal this in {round(difference / daily_average_hours, 1)} days!")
+                print(f"With your daily average time, you can complete this goal this in {round(difference / daily_average_hours, 1)} days!")
 
         self.data["goals"][goal_name] = [goal_date, goal_type, goal_number]
         self.save_data()
@@ -291,7 +291,7 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
 
     def shop(self):
         from utils.constants import SHOP_SCREEN, shop_items
-        slow_print(SHOP_SCREEN)
+        print(SHOP_SCREEN)
 
         console = Console()
 
@@ -339,25 +339,25 @@ q - Exit to home""", {"b": self.buy_item, "q": self.home})
         item_id = int(item_id)
 
         if shop_items[item_id][3] < 1:
-            slow_print("There is no stock left for the item.")
+            print("There is no stock left for the item.")
             self.wait_for_exit()
             self.shop()
             return
         
         if not self.data["coffers"] >= shop_items[item_id][2]:
-            slow_print("You don't have enough coffers to buy this item.")
-            slow_print(f"You need {shop_items[item_id][2] - self.data['coffers']} more coffers!")
+            print("You don't have enough coffers to buy this item.")
+            print(f"You need {shop_items[item_id][2] - self.data['coffers']} more coffers!")
             self.wait_for_exit()
             self.shop()
             return
         
-        slow_print(f"You successfully bought the {shop_items[item_id][0]} item!")
+        print(f"You successfully bought the {shop_items[item_id][0]} item!")
 
         self.data["coffers"] -= shop_items[item_id][2]
         self.data["bought_items"].append(shop_items[item_id][0])
         self.save_data()
 
-        slow_print(f"You now have {self.data['coffers']} remaining coffers!")
+        print(f"You now have {self.data['coffers']} remaining coffers!")
 
         self.wait_for_exit()
         self.shop()

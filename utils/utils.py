@@ -1,14 +1,6 @@
-import sys, time
+import sys
 
 from datetime import date, datetime
-
-def slow_print(text, interval=.03):
-    for char in text:
-        sys.stdout.write(char)
-        sys.stdout.flush()
-        time.sleep(interval)
-
-    sys.stdout.write('\n')
 
 def getchar():
     try:
