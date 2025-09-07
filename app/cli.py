@@ -111,7 +111,8 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
             table.add_column("Ship Count", justify="right", style="blue")
 
             for project, time, percent in data[3]:
-                table.add_row(project, str(time), f"{percent}%", str(self.data["projects"][project]["total_coffers"]), str(len(self.data["projects"][project]["ship_events"])))
+                if project in self.data["projects"]:
+                    table.add_row(project, str(time), f"{percent}%", str(self.data["projects"][project]["total_coffers"]), str(len(self.data["projects"][project]["ship_events"])))
 
             console.print(table)
         else:
@@ -162,11 +163,9 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
         table.add_column("Project", style="cyan", no_wrap=True)
         table.add_column("Time", style="magenta")
         table.add_column("Percent", justify="right", style="green")
-        table.add_column("Coffers", justify="right", style="yellow")
-        table.add_column("Ship Count", justify="right", style="blue")
-
         for project, time, percent in data[3]:
-            table.add_row(project, str(time), f"{percent}%", str(self.data["projects"][project]["total_coffers"]), str(len(self.data["projects"][project]["ship_events"])))
+            if not project in self.data["projects"]:
+                table.add_row(project, str(time), f"{percent}%")
 
         console.print(table)
 
