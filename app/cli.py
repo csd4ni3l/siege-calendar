@@ -205,7 +205,7 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
 
     def goals(self):
         from utils.constants import GOALS_SCREEN
-        self.command_wait(GOALS_SCREEN.format(goals=self.data["goals"]), {"a": self.add_goal, "r": self.remove_goal, "q": self.home})
+        self.command_wait(GOALS_SCREEN.format(goals='\n'.join([f"{goal_name} - {goal_data[2]} {goal_data[1]} until {goal_data[0]}" for goal_name, goal_data in self.data["goals"].items()]) or "You have no goals."), {"a": self.add_goal, "r": self.remove_goal, "q": self.home})
 
     def add_goal(self):
         print("Loading Hackatime stats...")
