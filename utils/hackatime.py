@@ -39,7 +39,7 @@ class Client:
         response = self.request(f"/users/my/stats?start_date={start_date}&end_date={end_date}&features=projects,languages")["data"]
 
         if not response.get("languages"): # no time for range, prevent crash
-            return None, 0
+            return 'None', [], 'None', [], "None", 0, "None", 0
 
         top_language = response["languages"][0]["name"]
         top_project = response["projects"][0]["name"]
