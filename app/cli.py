@@ -128,7 +128,7 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
             project_name = input("To add a ship event, please put the project's name here: ")
 
         coffer_amount = ''
-        while not coffer_amount.isnumeric():
+        while not coffer_amount.isnumeric() or coffer_amount >= 999:
             coffer_amount = input("Please enter the amount of coffers you got for the ship: ")
         coffer_amount = int(coffer_amount)
 
@@ -182,26 +182,7 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
 
         self.wait_for_exit()
         self.projects()
-
-    def add_coffers(self, project_name):
-        coffers = ''
-        while not coffers.isnumeric():
-            coffers = input("Amount of coffers: ")
-
-        hours = ''
-        while not hours.isnumeric():
-            hours = input("Amount of hours: ")
-
-        self.data["coffers"] += int(coffers)
-        self.save_data()
-
-        print(f"Multiplier: {round(int(coffers) / int(hours), 2)}x")
-        print(f"Date: {self.hackatime_client.get_date()}")
-        print(f"You are now the proud owner of {self.data['data']['coffers']} coffers!")
-
-        self.wait_for_exit()
-        self.home()
-
+        
     def stats_screen(self, today=False):
         print("Loading Hackatime stats...")
         data = self.hackatime_client.get_stats_for_today() if today else self.hackatime_client.get_stats()
@@ -338,7 +319,7 @@ q - Exit to home""", {"b": self.buy_item, "q": self.home})
             item_id = input("Enter an item ID to buy: ")
         item_id = int(item_id)
 
-        if shop_items[item_id][3] < 1:
+        if shop_items[item_id][3] - self.data["bought_items"].count(name) < 1:
             print("There is no stock left for the item.")
             self.wait_for_exit()
             self.shop()
