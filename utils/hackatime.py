@@ -1,11 +1,18 @@
-import os, requests, configparser
+import os, requests, configparser, sys
 from datetime import date, datetime, timedelta
 from utils.constants import HACKATIME_URL
+from pathlib import Path
 
 class Client:
     def __init__(self):
+        wakatime_config_path = Path.home() / ".wakatime.cfg"
+
+        if not os.path.exists(wakatime_config_path):
+            print("Wakatime config file doesnt exist, so we cant connect to Hackatime. Exiting...")
+            sys.exit(1)
+
         self.config = configparser.ConfigParser()
-        self.config.read(os.path.expanduser("~/.wakatime.cfg"))
+        self.config.read(wakatime_config_path)
 
         self.api_url = HACKATIME_URL
         self.api_key = self.config["settings"]["api_key"]
