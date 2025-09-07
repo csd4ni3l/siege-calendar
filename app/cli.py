@@ -18,6 +18,10 @@ class CLI():
         else:
             self.data = {"goals": {}, "coffers": 0, "bought_items": [], "projects": {}}
 
+    def save_data(self):
+        with open("data.json", "w") as file:
+            file.write(json.dumps(self.data, indent=4))
+
     def wait_for_input(self, text):
         print(text)
         return getchar()
@@ -75,10 +79,12 @@ class CLI():
             table.add_column("Project", style="cyan", no_wrap=True)
             table.add_column("Time", style="magenta")
             table.add_column("Percent", justify="right", style="green")
+            table.add_column("Coffers", justify="right", style="yellow")
+            table.add_column("Ship Count", justify="right", style="blue")
 
             for project, time, percent in data[3]:
                 if project in self.data["projects"]:
-                    table.add_row(project, str(time), f"{percent}%")
+                    table.add_row(project, str(time), f"{percent}%", str(self.data["projects"][project]["total_coffers"]), str(len(self.data["projects"][project]["ship_events"])))
 
             console.print(table)
         else:
@@ -101,10 +107,11 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
             table.add_column("Project", style="cyan", no_wrap=True)
             table.add_column("Time", style="magenta")
             table.add_column("Percent", justify="right", style="green")
+            table.add_column("Coffers", justify="right", style="yellow")
+            table.add_column("Ship Count", justify="right", style="blue")
 
             for project, time, percent in data[3]:
-                if project in self.data["projects"]:
-                    table.add_row(project, str(time), f"{percent}%")
+                table.add_row(project, str(time), f"{percent}%", str(self.data["projects"][project]["total_coffers"]), str(len(self.data["projects"][project]["ship_events"])))
 
             console.print(table)
         else:
@@ -124,16 +131,21 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
             coffer_amount = input("Please enter the amount of coffers you got for the ship: ")
         coffer_amount = int(coffer_amount)
 
-        ship_date = ''
-        while not ship_date.isnumeric():
-            ship_date = input("Please enter the date of ship (format YYYY-MM-DD): ")
-        ship_date = int(ship_date)
+        hour_amount = ''
+        while not hour_amount.isnumeric():
+            hour_amount = input("Please enter the amount of hours you did for the ship: ")
+        hour_amount = int(hour_amount)
 
-        self.data["projects"][project_name]["ship_events"].append((ship_date, coffer_amount))
+        ship_date = ''
+        while not is_valid_date(ship_date):
+            ship_date = input("Please enter the date of ship (format YYYY-MM-DD): ")
+
+        self.data["projects"][project_name]["ship_events"].append((ship_date, coffer_amount, hour_amount))
         self.data["projects"][project_name]["total_coffers"] += coffer_amount
         self.data["coffers"] += coffer_amount
+        self.save_data()
 
-        slow_print(f"Project {project_name} succesfully added to Siege projects!")
+        slow_print(f"Succesfully added ship event to {project_name} on date {ship_date} for {hour_amount} hours and {coffer_amount} coffers!")
 
         self.wait_for_exit()
         self.projects()
@@ -150,9 +162,11 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
         table.add_column("Project", style="cyan", no_wrap=True)
         table.add_column("Time", style="magenta")
         table.add_column("Percent", justify="right", style="green")
+        table.add_column("Coffers", justify="right", style="yellow")
+        table.add_column("Ship Count", justify="right", style="blue")
 
         for project, time, percent in data[3]:
-            table.add_row(project, str(time), f"{percent}%")
+            table.add_row(project, str(time), f"{percent}%", str(self.data["projects"][project]["total_coffers"]), str(len(self.data["projects"][project]["ship_events"])))
 
         console.print(table)
 
@@ -162,7 +176,8 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
         while project_name not in valid_project_names:
             project_name = input("To add a project, please put its name here: ")
 
-        self.data["projects"][project_name] = {"ship_events": {}, "total_coffers": 0}
+        self.data["projects"][project_name] = {"ship_events": [], "total_coffers": 0}
+        self.save_data()
 
         slow_print(f"Project {project_name} succesfully added to Siege projects!")
 
@@ -179,6 +194,7 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
             hours = input("Amount of hours: ")
 
         self.data["coffers"] += int(coffers)
+        self.save_data()
 
         slow_print(f"Multiplier: {round(int(coffers) / int(hours), 2)}x")
         slow_print(f"Date: {self.hackatime_client.get_date()}")
@@ -203,17 +219,6 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
             table.add_row(lang, str(time), f"{percent}%")
 
         console.print(table)
-
-        table2 = Table(title=f"Top Project: {data[2]} | Total time: {data[4]}")
-
-        table2.add_column("Project", style="cyan", no_wrap=True)
-        table2.add_column("Time", style="magenta")
-        table2.add_column("Percent", justify="right", style="green")
-
-        for project, time, percent in data[3]:
-            table2.add_row(project, str(time), f"{percent}%")
-
-        console.print(table2)
 
         self.wait_for_exit()
         self.home()
@@ -272,6 +277,7 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
                 slow_print(f"With your daily average time, you can complete this goal this in {round(difference / daily_average_hours, 1)} days!")
 
         self.data["goals"][goal_name] = [goal_date, goal_type, goal_number]
+        self.save_data()
 
         self.wait_for_exit()
         self.home()
@@ -282,6 +288,7 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
             goal_name = input("Goal Name To Remove: ")
 
         del self.data["goals"][goal_name]
+        self.save_data()
 
     def shop(self):
         from utils.constants import SHOP_SCREEN, shop_items
@@ -349,8 +356,12 @@ q - Exit to home""", {"b": self.buy_item, "q": self.home})
 
         self.data["coffers"] -= shop_items[item_id][2]
         self.data["bought_items"].append(shop_items[item_id][0])
+        self.save_data()
 
         slow_print(f"You now have {self.data['coffers']} remaining coffers!")
+
+        self.wait_for_exit()
+        self.shop()
 
 def run_cli():
     cli = CLI()
