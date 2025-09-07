@@ -128,7 +128,7 @@ q - Exit to home""", {"a": self.add_project, "q": self.home, "c": self.create_sh
             project_name = input("To add a ship event, please put the project's name here: ")
 
         coffer_amount = ''
-        while not coffer_amount.isnumeric() or coffer_amount >= 999:
+        while not coffer_amount.isnumeric() or int(coffer_amount) >= 2500:
             coffer_amount = input("Please enter the amount of coffers you got for the ship: ")
         coffer_amount = int(coffer_amount)
 
