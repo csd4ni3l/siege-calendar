@@ -12,7 +12,8 @@ class Client:
             sys.exit(1)
 
         self.config = configparser.ConfigParser()
-        self.config.read(wakatime_config_path)
+        with open(wakatime_config_path, encoding="utf-8-sig") as f:
+            self.config.read_file(f)
 
         self.api_url = HACKATIME_URL
         self.api_key = self.config["settings"]["api_key"]
