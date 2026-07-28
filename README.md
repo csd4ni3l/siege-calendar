@@ -10,3 +10,8 @@ Features:
 - Goals (Set hour or coffer goals and see how much time is left)
 - Statistics (Comming soon, will include median, average time to goal completion, etc)
 - Calendar (Comming soon, Set notifications, see how much you did for each day, etc)
+## Mirrors
+
+[![Forgejo](https://img.shields.io/badge/Forgejo-git.csd4ni3l.hu-1e90ff)](https://git.csd4ni3l.hu/csd4ni3l/siege-calendar)
+[![GitHub](https://img.shields.io/badge/GitHub-github.com-181717)](https://github.com/csd4ni3l/siege-calendar)
+[![Codeberg](https://img.shields.io/badge/Codeberg-codeberg.org-2185D0)](https://codeberg.org/csd4ni3l/siege-calendar)
