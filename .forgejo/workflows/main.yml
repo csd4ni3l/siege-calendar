@@ -53,7 +53,17 @@ jobs:
         run: ccache --show-stats
       - name: Zip
         run: |
-          zip -j siege_calendar_linux.zip build/SiegeCalendar.bin
+          set -euo pipefail
+          # The onefile artifact has no extension; Nuitka only keeps a .bin copy
+          # inside the intermediate <script>.dist directory, which is not shipped.
+          BIN="build/SiegeCalendar"
+          if [ ! -f "$BIN" ]; then
+            BIN=$(find build -maxdepth 1 -type f \( -name "SiegeCalendar" -o -name "SiegeCalendar.bin" \) | head -n 1)
+          fi
+          test -n "$BIN" && test -f "$BIN"
+          [ "$BIN" = "build/SiegeCalendar" ] || mv -- "$BIN" "build/SiegeCalendar"
+          zip -j siege_calendar_linux.zip "build/SiegeCalendar"
+          rm -rf build/*.dist build/*.build
       - name: Release
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
