@@ -43,7 +43,8 @@ jobs:
           python -m nuitka \
             --assume-yes-for-downloads \
             --include-data-files=CREDITS=CREDITS \
-            --mode=standalone \
+            --mode=onefile \
+            --output-filename=SiegeCalendar \
             --nofollow-import-to="*tk*,_codecs,encodings,multiprocessing,gi" \
             --output-dir=build \
             --disable-plugins=tk-inter,multiprocessing,gi \
@@ -52,8 +53,7 @@ jobs:
         run: ccache --show-stats
       - name: Zip
         run: |
-          BUILD_DIR=$(find . -maxdepth 3 -type d -name "*.dist" | head -n 1)
-          zip -r siege_calendar_linux.zip "$BUILD_DIR"
+          zip -j siege_calendar_linux.zip build/SiegeCalendar.bin
       - name: Release
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
